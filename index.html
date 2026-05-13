@@ -322,7 +322,7 @@
 
   <header><span class="name">kelsey wang</span></header>
 
-  <div id="drop-zone">
+  <div id="drop-zone" class="hidden">
     <p>drop pdf here</p>
     <label for="file-input">or browse</label>
     <input type="file" id="file-input" accept=".pdf,application/pdf">
@@ -484,10 +484,15 @@
       processPdfDocument(pdfjsLib.getDocument(url));
     }
 
-    // auto-load if a URL is configured (or passed via ?pdf=...)
+    // auto-load if a URL is configured (or passed via ?pdf=...);
+    // otherwise reveal the drop zone for manual file selection.
     const params = new URLSearchParams(window.location.search);
     const autoUrl = params.get('pdf') || PDF_URL;
-    if (autoUrl) loadFromUrl(autoUrl);
+    if (autoUrl) {
+      loadFromUrl(autoUrl);
+    } else {
+      dropZone.classList.remove('hidden');
+    }
 
     fileInput.addEventListener('change', e => loadFile(e.target.files[0]));
     openNewBtn.addEventListener('click', () => fileInput.click());
