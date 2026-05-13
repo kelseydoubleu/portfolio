@@ -94,7 +94,12 @@
       background: radial-gradient(ellipse at center, rgba(0,0,0,0.12), rgba(0,0,0,0) 65%);
       z-index: 0;
       pointer-events: none;
+      transition: opacity 0.32s;
     }
+    /* in cover / end-cover states, drop the floating shadows altogether — the
+       single page reads as a clean card rather than as half of a book */
+    #book.solo::after { opacity: 0; }
+    #book.solo .cell { box-shadow: none; }
 
     /* underlying spread — two squares side by side */
     #spread {
@@ -359,12 +364,6 @@
     <button class="nav-btn" id="next-btn" aria-label="Next">&#8594;</button>
   </nav>
 
-  <div id="top-right">
-    <button class="corner-btn" id="open-new-btn">open different pdf</button>
-  </div>
-
-  <div id="hint"><kbd>&larr;</kbd>&nbsp;<kbd>&rarr;</kbd></div>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>
     pdfjsLib.GlobalWorkerOptions.workerSrc =
@@ -394,12 +393,9 @@
     const frontShade      = document.getElementById('front-shade');
     const backShade       = document.getElementById('back-shade');
     const navEl           = document.getElementById('nav');
-    const topRight        = document.getElementById('top-right');
-    const hint            = document.getElementById('hint');
     const pageInfo        = document.getElementById('page-info');
     const prevBtn         = document.getElementById('prev-btn');
     const nextBtn         = document.getElementById('next-btn');
-    const openNewBtn      = document.getElementById('open-new-btn');
     const loading         = document.getElementById('loading');
 
     // ── state ────────────────────────────────────────────────
@@ -461,8 +457,6 @@
         dropZone.classList.add('hidden');
         stage.classList.add('visible');
         navEl.classList.add('visible');
-        topRight.classList.add('visible');
-        hint.classList.add('visible');
         updateNav();
         prefetchAdjacent();
       } catch (err) {
@@ -495,7 +489,6 @@
     }
 
     fileInput.addEventListener('change', e => loadFile(e.target.files[0]));
-    openNewBtn.addEventListener('click', () => fileInput.click());
 
     document.addEventListener('dragover', e => {
       e.preventDefault();
@@ -512,8 +505,9 @@
     function layoutBook() {
       const availW = window.innerWidth - 112;
       const availH = window.innerHeight - 154;
-      // each cell is a square; book is 2 cells wide
-      cellSide = Math.floor(Math.min(availW / 2, availH));
+      // each cell is a square; book is 2 cells wide.
+      // multiplier leaves breathing room around the book.
+      cellSide = Math.floor(Math.min(availW / 2, availH) * 0.85);
       bookEl.style.width  = (cellSide * 2) + 'px';
       bookEl.style.height = cellSide + 'px';
     }
@@ -569,7 +563,12 @@
         paintCanvas(pages.right, rightCanvas, rightCell),
       ]);
       bookEl.style.transform = `translateX(${computeTx(pages)}px)`;
-      setSpineVisible(!!(pages.left && pages.right));
+      setSpreadMode(!!(pages.left && pages.right));
+    }
+
+    function setSpreadMode(isSpread) {
+      setSpineVisible(isSpread);
+      bookEl.classList.toggle('solo', !isSpread);
     }
 
     function setSpineVisible(visible) {
@@ -683,7 +682,7 @@
                         direction > 0 ? leftCanvas : rightCanvas,
                         direction > 0 ? leftCell   : rightCell);
           }
-          setSpineVisible(!!(toPages.left && toPages.right));
+          setSpreadMode(!!(toPages.left && toPages.right));
         }
 
         // book glides between solo/spread positions during cover↔spread transitions
