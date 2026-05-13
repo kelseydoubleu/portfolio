@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>kelsey wang</title>
   <style>
     :root {
@@ -166,14 +166,34 @@ header {
 }
 #spine.hidden { opacity: 0; }
 
-/* cast shadow from the lifting leaf */
-#flip-shadow {
+/* cast shadow from the lifting leaf — two static gradients,
+   one falling on the right cell and one on the left.
+   Per-frame work is opacity-only, no gradient re-rasterization. */
+.flip-shadow {
   position: absolute;
   inset: 0;
   z-index: 6;
   pointer-events: none;
   opacity: 0;
-  will-change: opacity, background;
+  will-change: opacity;
+}
+#flip-shadow-right {
+  background: linear-gradient(to right,
+    rgba(0,0,0,0) 0%,
+    rgba(0,0,0,0) 50%,
+    rgba(0,0,0,0.30) 50.5%,
+    rgba(0,0,0,0.135) 66%,
+    rgba(0,0,0,0.036) 82%,
+    rgba(0,0,0,0) 100%);
+}
+#flip-shadow-left {
+  background: linear-gradient(to left,
+    rgba(0,0,0,0) 0%,
+    rgba(0,0,0,0) 50%,
+    rgba(0,0,0,0.30) 50.5%,
+    rgba(0,0,0,0.135) 66%,
+    rgba(0,0,0,0.036) 82%,
+    rgba(0,0,0,0) 100%);
 }
 
 /* flipper — positioned at right cell, hinged on the spine */
@@ -187,10 +207,14 @@ header {
   -webkit-transform-style: preserve-3d;
   z-index: 10;
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
   will-change: transform, opacity;
 }
-.flipper-lift.active { opacity: 1; }
+.flipper-lift.active {
+  opacity: 1;
+  visibility: visible;
+}
 
 .flipper {
   position: absolute;
@@ -207,7 +231,6 @@ header {
   inset: 0;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -227,13 +250,21 @@ header {
   -webkit-transform: translate3d(0,0,0) rotateY(180deg);
 }
 
-/* per-face shading overlay, driven from JS */
+/* per-face shading overlay — static gradient, opacity driven by JS */
 .shade {
   position: absolute;
   inset: 0;
   pointer-events: none;
   opacity: 0;
-  will-change: opacity, background;
+  will-change: opacity;
+}
+#front-shade {
+  background: linear-gradient(to right,
+    rgba(0,0,0,0.067) 0%, rgba(0,0,0,0.42) 100%);
+}
+#back-shade {
+  background: linear-gradient(to left,
+    rgba(0,0,0,0.067) 0%, rgba(0,0,0,0.42) 100%);
 }
 
 /* ── nav ───────────────────────────────────────────────── */
@@ -357,14 +388,15 @@ kbd {
         <div class="cell right" id="right-cell"><canvas id="right-canvas"></canvas></div>
       </div>
       <div id="spine" class="hidden"></div>
-      <div id="flip-shadow"></div>
+      <div class="flip-shadow" id="flip-shadow-right"></div>
+      <div class="flip-shadow" id="flip-shadow-left"></div>
       <div class="flipper-lift" id="flipper-lift">
         <div class="flipper" id="flipper">
-          <div class="face front">
+          <div class="face front" id="flip-front-face">
             <canvas id="flip-front-canvas"></canvas>
             <div class="shade" id="front-shade"></div>
           </div>
-          <div class="face back">
+          <div class="face back" id="flip-back-face">
             <canvas id="flip-back-canvas"></canvas>
             <div class="shade" id="back-shade"></div>
           </div>
@@ -405,9 +437,12 @@ kbd {
     const spineEl         = document.getElementById('spine');
     const flipperLift     = document.getElementById('flipper-lift');
     const flipper         = document.getElementById('flipper');
+    const flipFrontFace   = document.getElementById('flip-front-face');
+    const flipBackFace    = document.getElementById('flip-back-face');
     const flipFrontCanvas = document.getElementById('flip-front-canvas');
     const flipBackCanvas  = document.getElementById('flip-back-canvas');
-    const flipShadow      = document.getElementById('flip-shadow');
+    const flipShadowRight = document.getElementById('flip-shadow-right');
+    const flipShadowLeft  = document.getElementById('flip-shadow-left');
     const frontShade      = document.getElementById('front-shade');
     const backShade       = document.getElementById('back-shade');
     const navEl           = document.getElementById('nav');
@@ -712,49 +747,35 @@ kbd {
         flipperLift.style.transform = `translate3d(0, 0, ${lift}px)`;
         flipper.style.transform     = `rotateY(${angle}deg)`;
 
-        // page-face shading: gradient runs from spine (light) to free edge (dark)
-        const tilt = Math.sin(absA * Math.PI / 180); // 0 → 1 → 0
-        const dim  = tilt * 0.42;
-        const edgeAlpha  = dim;
-        const spineAlpha = dim * 0.16;
-
+        // explicitly hide whichever face isn't supposed to be visible — iOS
+        // Safari can't be trusted to honor backface-visibility consistently
+        // inside a preserve-3d chain, and "both faces rendered at once" is
+        // exactly the ghosting symptom on mobile.
         if (absA <= 90) {
-          // front face visible — free edge on the (local) right
-          frontShade.style.background =
-            `linear-gradient(to right, rgba(0,0,0,${spineAlpha}) 0%, rgba(0,0,0,${edgeAlpha}) 100%)`;
-          frontShade.style.opacity = 1;
-          backShade.style.opacity  = 0;
+          flipFrontFace.style.visibility = 'visible';
+          flipBackFace.style.visibility  = 'hidden';
         } else {
-          // back face: its local +x is mirrored vs. the front, so we run the
-          // gradient to the left to keep dark on the free edge in world space.
-          backShade.style.background =
-            `linear-gradient(to left, rgba(0,0,0,${spineAlpha}) 0%, rgba(0,0,0,${edgeAlpha}) 100%)`;
-          backShade.style.opacity = 1;
-          frontShade.style.opacity = 0;
+          flipFrontFace.style.visibility = 'hidden';
+          flipBackFace.style.visibility  = 'visible';
         }
 
-        // cast shadow on the underlying spread.
-        // Strength on each side follows sin(2θ): peaks around 45° on the right,
-        // crosses smoothly through zero at 90°, peaks around 135° on the left.
-        // Both gradients are always painted; their alphas drive the visibility,
-        // so the shadow sweeps from one cell to the other without a hard switch.
-        const sweep = Math.sin(absA * 2 * Math.PI / 180); // +1 at 45°, 0 at 90°, −1 at 135°
-        const rA = Math.max(0, sweep) * 0.30;
-        const lA = Math.max(0, -sweep) * 0.30;
-        flipShadow.style.background =
-          `linear-gradient(to right,
-             rgba(0,0,0,0) 50%,
-             rgba(0,0,0,${rA}) 50.5%,
-             rgba(0,0,0,${rA * 0.45}) 66%,
-             rgba(0,0,0,${rA * 0.12}) 82%,
-             rgba(0,0,0,0) 100%),
-           linear-gradient(to left,
-             rgba(0,0,0,0) 50%,
-             rgba(0,0,0,${lA}) 50.5%,
-             rgba(0,0,0,${lA * 0.45}) 66%,
-             rgba(0,0,0,${lA * 0.12}) 82%,
-             rgba(0,0,0,0) 100%)`;
-        flipShadow.style.opacity = 1;
+        // page-face shading: static gradients on the shade elements;
+        // opacity is the only thing changing each frame (cheap on compositor).
+        const tilt = Math.sin(absA * Math.PI / 180); // 0 → 1 → 0
+        if (absA <= 90) {
+          frontShade.style.opacity = tilt;
+          backShade.style.opacity  = 0;
+        } else {
+          frontShade.style.opacity = 0;
+          backShade.style.opacity  = tilt;
+        }
+
+        // cast shadow: two pre-built static gradients (right side, left side).
+        // sin(2θ) gives +1 around 45° and −1 around 135°, smoothly crossing
+        // through zero at 90°. Opacity is the only animated property.
+        const sweep = Math.sin(absA * 2 * Math.PI / 180);
+        flipShadowRight.style.opacity = Math.max(0,  sweep);
+        flipShadowLeft.style.opacity  = Math.max(0, -sweep);
 
         if (raw < 1) {
           requestAnimationFrame(frame);
@@ -775,9 +796,10 @@ kbd {
       flipperLift.classList.remove('active');
       flipperLift.style.transform = 'translate3d(0, 0, 0)';
       flipper.style.transform     = 'rotateY(0deg)';
-      frontShade.style.opacity = 0;
-      backShade.style.opacity  = 0;
-      flipShadow.style.opacity = 0;
+      frontShade.style.opacity      = 0;
+      backShade.style.opacity       = 0;
+      flipShadowRight.style.opacity = 0;
+      flipShadowLeft.style.opacity  = 0;
 
       animating = false;
       updateNav();
