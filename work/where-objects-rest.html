@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WHERE OBJECTS REST · Kelsey Wang</title>
+<meta name="description" content="Housing designed equally for people and for their objects.">
+<meta property="og:title" content="WHERE OBJECTS REST · Kelsey Wang">
+<meta property="og:description" content="Housing designed equally for people and for their objects.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body class="proj">
+<header class="top">
+  <a class="name" href="../index.html">KELSEY WANG</a>
+  <nav><a href="../index.html#studio">Work</a><a href="../index.html#play">Play</a><a href="../about.html">About</a><a href="../book/">PDF</a></nav>
+</header>
+<main class="project">
+<div class="phead"><div class="side"><h1>WHERE OBJECTS REST</h1><dl><dt>Semester</dt><dd>Core III &quot;Every Thing, A Home&quot;, Fall 2024</dd><dt>Site</dt><dd>454-458 W 128th St, New York, NY</dd><dt>Instructor</dt><dd>Jelisa Blumberg</dd></dl></div>
+<div class="body"><p class="sum">Housing designed equally for people and for their objects.</p><p>Housing is typically designed for people. This project proposes one designed equally for their objects. A central storage core organizes circulation while serving as a shared archive for residential belonging, inspired by the Metabolist movement, where the core remains constant while the surroundings evolve.</p><p>Sir John Soane&#x27;s drawing office, where objects are not hidden but displayed, studied and lived among, is the project&#x27;s reference. Units are designed around what residents keep: storage becomes a spatial and social layer rather than a closet.</p></div></div>
+<div class="hero"><img src="../img/wo-plan.jpg" alt="WHERE OBJECTS REST"></div>
+<section class="chapter"><div class=txt><h2>Units</h2></div><div class="figs"><figure class="f"><img src="../img/wo-studio.jpg" width="683" height="766" alt="" loading="lazy"></figure><figure class="f tall"><img src="../img/wo-2bdr.jpg" width="720" height="903" alt="" loading="lazy"></figure><figure class="f"><img src="../img/wo-1bdr.jpg" width="787" height="671" alt="" loading="lazy"></figure><figure class="f"><img src="../img/wo-soane.jpg" width="2000" height="1623" alt="" loading="lazy"></figure></div></section><section class="chapter"><div class=txt><h2>Levels</h2></div><div class="figs"><figure class="f wide"><img src="../img/wo-levels.jpg" width="1686" height="1304" alt="" loading="lazy"></figure></div></section><section class="chapter"><div class=txt><h2>Scripted density</h2><p>A Grasshopper script automates the placement of modular housing units across a site based on adjustable building heights and density goals. Each iteration evaluates FAR, unit count and storage capacity, supporting rapid exploration of housing and development scenarios.</p></div><div class="figs"><figure class="f wide"><img src="../img/wo-script.jpg" width="2000" height="1002" alt="" loading="lazy"></figure></div></section>
+<nav class="pn"><a href="spectacle-sh-216.html">← SPECTACLE &amp; SH-216</a><a href="../index.html">INDEX</a><a href="125-corner-university.html">125 CORNER UNIVERSITY →</a></nav>
+</main>
+<footer><span>KELSEY WANG · New York</span><span><a href="https://github.com/kelseydoubleu">GitHub</a> · <a href="../book/">PDF portfolio</a></span></footer>
+<div class="lb" id="lb" hidden><img alt=""><button aria-label="Close">×</button></div>
+<script>
+const lb=document.getElementById('lb'),li=lb.querySelector('img');
+document.querySelectorAll('figure img').forEach(i=>i.addEventListener('click',()=>{li.src=i.src;lb.hidden=false;}));
+lb.addEventListener('click',()=>lb.hidden=true);
+addEventListener('keydown',e=>{if(e.key==='Escape')lb.hidden=true;});
+</script>
+</body>
+</html>
