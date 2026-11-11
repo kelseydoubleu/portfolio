@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BOUNDING BOX ARCHITECTURE · Kelsey Wang</title>
+<meta name="description" content="A machine vision probe: what object detection sees in architecture, and what dissolves into noise.">
+<meta property="og:title" content="BOUNDING BOX ARCHITECTURE · Kelsey Wang">
+<meta property="og:description" content="A machine vision probe: what object detection sees in architecture, and what dissolves into noise.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body class="proj">
+<header class="top">
+  <a class="name" href="../index.html">KELSEY WANG</a>
+  <nav><a href="../index.html#studio">Work</a><a href="../index.html#play">Play</a><a href="../about.html">About</a><a href="../book/">PDF</a></nav>
+</header>
+<main class="project">
+<div class="phead"><div class="side"><h1>BOUNDING BOX ARCHITECTURE</h1><dl><dt>Type</dt><dd>Research, 2026</dd><dt>With</dt><dd>Amelyn Ng, Columbia GSAPP</dd><dt>Tools</dt><dd>YOLO11 / YOLO12, ONNX Runtime Web, Supabase</dd></dl><a class="cta" href="https://boundingboxarchitecture.site/" target="_blank" rel="noopener">Try it ↗</a><a class="cta" href="https://github.com/kelseydoubleu/bounding-box-architecture" target="_blank" rel="noopener">Code ↗</a></div>
+<div class="body"><p class="sum">A machine vision probe: what object detection sees in architecture, and what dissolves into noise.</p><p>How we design our data is how we design our outputs. Bounding Box Architecture is a machine vision probe for architectural images. Upload a photograph, a rendering or a collage, and object detection models report what they recognize. Everything the model has no word for dissolves into noise.</p><p>People then label what the model missed, and those labels build a shared archive of the built environment&#x27;s blind spots. Detection runs entirely in the browser, so images only leave the device when someone chooses to save them. The site was used in a workshop with about 120 students uploading images from their phones.</p></div></div>
+<div class="hero"><img src="../img/bb-og.jpg" alt="BOUNDING BOX ARCHITECTURE"></div>
+
+<nav class="pn"><a href="125-corner-university.html">← 125 CORNER UNIVERSITY</a><a href="../index.html">INDEX</a><a href="offbrand-assets.html">OFFBRAND ASSETS →</a></nav>
+</main>
+<footer><span>KELSEY WANG · New York</span><span><a href="https://github.com/kelseydoubleu">GitHub</a> · <a href="../book/">PDF portfolio</a></span></footer>
+<div class="lb" id="lb" hidden><img alt=""><button aria-label="Close">×</button></div>
+<script>
+const lb=document.getElementById('lb'),li=lb.querySelector('img');
+document.querySelectorAll('figure img').forEach(i=>i.addEventListener('click',()=>{li.src=i.src;lb.hidden=false;}));
+lb.addEventListener('click',()=>lb.hidden=true);
+addEventListener('keydown',e=>{if(e.key==='Escape')lb.hidden=true;});
+</script>
+</body>
+</html>
