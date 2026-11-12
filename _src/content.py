@@ -172,19 +172,6 @@ PROJECTS = [
         "sections": [],
         "links": [("Try it", "https://boundingboxarchitecture.site/"), ("Code", "https://github.com/kelseydoubleu/bounding-box-architecture")],
     },
-    {
-        "slug": "offbrand-assets", "section": "research",
-        "title": "OFFBRAND ASSETS",
-        "meta": [("Type", "Research, 2026"), ("With", "Amelyn Ng, Columbia GSAPP"), ("Tools", "Revit, Dynamo, Python")],
-        "summary": "Alt-generic Revit families: generic in build, specific in life.",
-        "cover": None,
-        "body": [
-            "BIM libraries are full of generic furniture: the default bed, the default dining table, the same six chairs. Offbrand Assets is a set of downloadable, parametric \"stick\" Revit families that stay generic in how they are built but become specific in what they show.",
-            "The bed comes in types like Bed Rot, Pillow Lover, Never Makes Bed, Sick Day, Laundry Day and Hotel. The dining table holds Lunar New Year before and after the meal, Thanksgiving, homework time, a poker game and a house party. Seats, bed size, pizza count and laundry amount are parameters. The project is framed against the standardizing logic of the Frankfurt Kitchen.",
-        ],
-        "sections": [],
-        "links": [],
-    },
     # ---------- play ----------
     {
         "slug": "carbon-capital", "section": "play", "external": "https://kelseydoubleu.github.io/CarbonCapital/",

@@ -115,6 +115,7 @@
     try { mode = sessionStorage.getItem('kw-mode') || (reduce ? 'index' : 'pile'); } catch (e) {}
     function setMode(m) {
       mode = m;
+      document.body.classList.remove('m-pile', 'm-axon', 'm-index'); document.body.classList.add('m-' + m);
       $$('.modes button').forEach(b => b.classList.toggle('on', b.dataset.mode === m));
       Object.entries(views).forEach(([k, v]) => v.classList.toggle('on', k === m));
       $('#hint').textContent = hints[m];
@@ -143,7 +144,7 @@
       }
       makeWalls();
       const items = [];
-      const scale = Math.max(.5, Math.min(1, Wd / 1300));
+      const scale = Math.max(.36, Math.min(1, Math.sqrt(Wd * Hd / (1300 * 820))) * .7);
       function add(node, w, h, opts, delay) {
         node.style.width = w + 'px'; node.style.height = h + 'px';
         node.style.transform = `translate(-999px,-999px)`;
@@ -213,7 +214,7 @@
       if (axonBuilt) return; axonBuilt = true;
       const iso = $('#iso');
       const C = Math.cos(Math.PI / 6), Sn = Math.sin(Math.PI / 6);
-      const S = 128, G = 64;
+      const S = 120, G = 60;
       const P = (x, y, z) => [(x - y) * C, (x + y) * Sn - z];
       const cells = [[0, 0], [2, 0], [4, 0], [1, 1], [3, 1], [0, 2], [2, 2], [4, 2], [1, 3], [3, 3], [0, 4], [2, 4], [4, 4], [1, 0], [3, 0]];
       const heights = [150, 70, 210, 40, 120, 90, 180, 60, 140, 30, 100, 160];
@@ -239,7 +240,7 @@
       iso.style.width = (maxX - minX) + 'px'; iso.style.height = (maxY - minY) + 'px';
       $$('.cube', iso).forEach(c => c.style.left = (-minX) + 'px');
       $$('.cube', iso).forEach(c => c.style.top = (-minY) + 'px');
-      const fit = () => { const k = Math.min(1, (views.axon.clientWidth - 40) / (maxX - minX), (views.axon.clientHeight - 60) / (maxY - minY)); iso.dataset.k = k; };
+      const fit = () => { const k = Math.min(1, (views.axon.clientWidth - 40) / (maxX - minX), (views.axon.clientHeight - 100) / (maxY - minY)); iso.dataset.k = k; };
       fit(); addEventListener('resize', fit);
       let t0 = performance.now();
       axonPar = () => {
@@ -260,8 +261,7 @@
     addEventListener('pointermove', e => { if (peek.classList.contains('on')) peek.style.transform = `translate(${e.clientX + 24}px,${e.clientY - 80}px) rotate(${((e.clientX % 40) - 20) / 10}deg)`; }, { passive: true });
 
     // start the pile when the stage scrolls into view
-    const sio = new IntersectionObserver(es => { if (es[0].isIntersecting) { setMode(mode); sio.disconnect(); } }, { threshold: .15 });
-    sio.observe($('#stage'));
+    setMode(mode);
     $$('.modes button').forEach(b => b.classList.toggle('on', b.dataset.mode === mode));
   }
 

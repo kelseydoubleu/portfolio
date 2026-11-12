@@ -80,23 +80,17 @@ def build_index():
         f'<span class="c">{E(it["course"])}</span><span class="s">{E(dict(SECTIONS)[it["section"]].split(",")[0].lower())}</span><span class="y">{it["year"]}</span></a>'
         for it in items)
     body = f'''<main class="home">
-<section class="hero">
-  <h1 class="big" data-scatter data-explode>kelsey wang</h1>
-  <p class="lede">{E(SITE['tagline'])}</p>
-</section>
-<div class="modes" role="tablist">
-  <button data-mode="pile" class="on">pile</button><button data-mode="axon">axon</button><button data-mode="index">index</button>
-  <span class="hint" id="hint">drag, throw, double-click to open</span>
-</div>
+<h1 class="big" data-scatter data-explode aria-label="Kelsey Wang">kelsey wang</h1>
 <section class="stage" id="stage">
   <div class="view pile on" id="pile"></div>
   <div class="view axon" id="axon"><div class="iso" id="iso"></div></div>
   <div class="view index" id="index"><div class="rows">{rows}</div><img class="peek" id="peek" alt=""></div>
 </section>
-<section class="play" id="play">
-  <h2 class="label">games + tools <span>({sum(1 for it in items if it["section"] == "play")})</span></h2>
-  <div class="blocks">{''.join(f'<a class="block" href="{it["href"]}" target="_blank" rel="noopener" style="--r:{[-3, 2, -1.5, 3.5][k % 4]}deg"><div class="ph"><img src="img/{it["cover"]}.jpg" alt="" loading="lazy"></div><b>{E(it["title"].lower())} ↗</b><small>{E(it["summary"])}</small></a>' for k, it in enumerate([x for x in items if x["section"] == "play"]))}</div>
-</section>
+<p class="lede">{E(SITE['tagline'])}</p>
+<div class="modes" role="tablist">
+  <button data-mode="pile" class="on">pile</button><button data-mode="axon">axon</button><button data-mode="index">index</button>
+  <span class="hint" id="hint"></span>
+</div>
 </main>
 <script>window.WORKS = {json.dumps(items)};</script>
 <script src="assets/matter.min.js"></script>'''
