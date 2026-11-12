@@ -7,29 +7,25 @@
 <meta name="description" content="A big-box retail building returned to its original civic mission.">
 <meta property="og:title" content="125 CORNER UNIVERSITY · Kelsey Wang">
 <meta property="og:description" content="A big-box retail building returned to its original civic mission.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect x='2' y='2' width='12' height='12' fill='none' stroke='%23ff6026' stroke-width='2'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../style.css">
 </head>
 <body class="proj">
-<header class="top">
-  <a class="name" href="../index.html">KELSEY WANG</a>
-  <nav><a href="../index.html#studio">Work</a><a href="../index.html#play">Play</a><a href="../about.html">About</a><a href="../book/">PDF</a></nav>
-</header>
+<a class="logo" href="../index.html" aria-label="Home"><span data-scatter>kelsey wang</span></a>
+<nav class="tags" aria-label="Main"><a href="../index.html" style="--r:-4deg">work</a><a href="../index.html#play" style="--r:3deg">play</a><a href="../about.html" style="--r:-2deg">about</a><a href="../book/" style="--r:5deg">pdf</a></nav>
 <main class="project">
-<div class="phead"><div class="side"><h1>125 CORNER UNIVERSITY</h1><dl><dt>Semester</dt><dd>Core I &quot;Fugitive Mobilities&quot;, Fall 2023</dd><dt>Site</dt><dd>Harlem, NYC</dd><dt>Instructor</dt><dd>Galen Pardee</dd></dl></div>
-<div class="body"><p class="sum">A big-box retail building returned to its original civic mission.</p><p>Originally built in 2001 by the Abyssinian Development Corporation as a big box retail and office complex, 125 Corner University reimagines the building as a vertical neighborhood institution that serves every member of the Harlem community within a single structure.</p><p>The Abyssinian Development Corporation built this building to rebuild the social and physical capital of Harlem. What opened was a Marshalls, a CVS and a Dunkin Donuts. 125 Corner University returns the building to that original mission, stacking the services the community actually needs above the retail that pays for them.</p></div></div>
-<div class="hero"><img src="../img/cu-axon.jpg" alt="125 CORNER UNIVERSITY"></div>
-<section class="chapter"><div class="figs"><figure class="f wide"><img src="../img/cu-hero.jpg" width="2000" height="1226" alt="" loading="lazy"></figure><figure class="f"><img src="../img/cu-collage.jpg" width="1680" height="1680" alt="" loading="lazy"></figure><figure class="f tall"><img src="../img/cu-stack.jpg" width="646" height="1292" alt="" loading="lazy"></figure><figure class="f wide"><img src="../img/cu-context.jpg" width="1575" height="1051" alt="" loading="lazy"></figure></div></section>
-<nav class="pn"><a href="where-objects-rest.html">← WHERE OBJECTS REST</a><a href="../index.html">INDEX</a><a href="bounding-box-architecture.html">BOUNDING BOX ARCHITECTURE →</a></nav>
+<div class="phead">
+  <h1 class="ptitle" data-scatter data-explode>125 corner university</h1>
+  <div class="cols"><dl><dt>semester</dt><dd>Core I &quot;Fugitive Mobilities&quot;, Fall 2023</dd><dt>site</dt><dd>Harlem, NYC</dd><dt>instructor</dt><dd>Galen Pardee</dd></dl><div class="body"><p class="sum">A big-box retail building returned to its original civic mission.</p><p>Originally built in 2001 by the Abyssinian Development Corporation as a big box retail and office complex, 125 Corner University reimagines the building as a vertical neighborhood institution that serves every member of the Harlem community within a single structure.</p><p>The Abyssinian Development Corporation built this building to rebuild the social and physical capital of Harlem. What opened was a Marshalls, a CVS and a Dunkin Donuts. 125 Corner University returns the building to that original mission, stacking the services the community actually needs above the retail that pays for them.</p></div></div>
+</div>
+<div class="hero-img"><img src="../img/cu-axon.jpg" alt="125 CORNER UNIVERSITY"></div>
+<section class="chapter"><div class="figs"><figure class="f wide" style="--d:0ms"><img src="../img/cu-hero.jpg" width="2000" height="1226" alt="" loading="lazy"></figure><figure class="f" style="--d:70ms"><img src="../img/cu-collage.jpg" width="1680" height="1680" alt="" loading="lazy"></figure><figure class="f" style="--d:140ms"><img src="../img/cu-stack.jpg" width="646" height="1292" alt="" loading="lazy"></figure><figure class="f wide" style="--d:210ms"><img src="../img/cu-context.jpg" width="1575" height="1051" alt="" loading="lazy"></figure></div></section>
+<nav class="pn"><a href="where-objects-rest.html">← where objects rest</a><a href="../index.html">index</a><a href="bounding-box-architecture.html">bounding box architecture →</a></nav>
 </main>
-<footer><span>KELSEY WANG · New York</span><span><a href="https://github.com/kelseydoubleu">GitHub</a> · <a href="../book/">PDF portfolio</a></span></footer>
+<footer><span>kelsey wang · new york</span><span><a href="https://github.com/kelseydoubleu">github</a> · <a href="../book/">pdf portfolio</a></span></footer>
 <div class="lb" id="lb" hidden><img alt=""><button aria-label="Close">×</button></div>
-<script>
-const lb=document.getElementById('lb'),li=lb.querySelector('img');
-document.querySelectorAll('figure img').forEach(i=>i.addEventListener('click',()=>{li.src=i.src;lb.hidden=false;}));
-lb.addEventListener('click',()=>lb.hidden=true);
-addEventListener('keydown',e=>{if(e.key==='Escape')lb.hidden=true;});
-</script>
+<script src="../fun.js"></script>
 </body>
 </html>

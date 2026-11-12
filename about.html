@@ -7,24 +7,20 @@
 <meta name="description" content="Architectural designer and technologist in New York. I build games, tools and drawings that make hidden systems legible.">
 <meta property="og:title" content="About · Kelsey Wang">
 <meta property="og:description" content="Architectural designer and technologist in New York. I build games, tools and drawings that make hidden systems legible.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect x='2' y='2' width='12' height='12' fill='none' stroke='%23ff6026' stroke-width='2'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
-<body class="">
-<header class="top">
-  <a class="name" href="index.html">KELSEY WANG</a>
-  <nav><a href="index.html#studio">Work</a><a href="index.html#play">Play</a><a href="about.html">About</a><a href="book/">PDF</a></nav>
-</header>
-<main class="about"><div class="side"><h1>ABOUT</h1></div><div class="body"><p>Kelsey Wang is an architectural designer and creative technologist based in Brooklyn. She holds an M.Arch from Columbia GSAPP (2026) and a computer science background from Stanford.</p><p>She works in the Design Technology studio at Gensler New York, building data products and tools for design teams. She also holds a research appointment with Professor Amelyn Ng at Columbia, working on machine perception, object detection and drawing, and teaches at GSAPP.</p><p>Her work sits between architecture and software: playable simulations of how cities decide, websites that act as public instruments, and drawings that follow a thing from origin to consequence.</p><h2>Education</h2><ul><li><span>2023-2026</span>Master of Architecture, Columbia GSAPP</li><li><span></span>Computer Science, Stanford University</li></ul><h2>Work</h2><ul><li><span>2026-</span>Design Technology, Gensler New York</li><li><span>2026-</span>Research appointment, Columbia GSAPP (with Amelyn Ng)</li><li><span>2026-</span>Teaching Associate, Columbia GSAPP</li></ul>
-    <h2>Elsewhere</h2><ul><li><span></span><a href="https://github.com/kelseydoubleu">GitHub</a></li><li><span></span><a href="book/">PDF portfolio</a></li></ul></div></main>
-<footer><span>KELSEY WANG · New York</span><span><a href="https://github.com/kelseydoubleu">GitHub</a> · <a href="book/">PDF portfolio</a></span></footer>
+<body class="aboutp">
+<a class="logo" href="index.html" aria-label="Home"><span data-scatter>kelsey wang</span></a>
+<nav class="tags" aria-label="Main"><a href="index.html" style="--r:-4deg">work</a><a href="index.html#play" style="--r:3deg">play</a><a href="about.html" style="--r:-2deg">about</a><a href="book/" style="--r:5deg">pdf</a></nav>
+<main class="about">
+<p class="intro" data-scatter>Kelsey Wang is an architectural designer and creative technologist based in Brooklyn. She holds an M.Arch from Columbia GSAPP (2026) and a computer science background from Stanford.</p>
+<div class="cols"><div></div><div class="body"><p>She works in the Design Technology studio at Gensler New York, building data products and tools for design teams. She also holds a research appointment with Professor Amelyn Ng at Columbia, working on machine perception, object detection and drawing, and teaches at GSAPP.</p><p>Her work sits between architecture and software: playable simulations of how cities decide, websites that act as public instruments, and drawings that follow a thing from origin to consequence.</p><h2 class="label">education</h2><ul><li><span>2023-2026</span>Master of Architecture, Columbia GSAPP</li><li><span></span>Computer Science, Stanford University</li></ul><h2 class="label">work</h2><ul><li><span>2026-</span>Design Technology, Gensler New York</li><li><span>2026-</span>Research appointment, Columbia GSAPP (with Amelyn Ng)</li><li><span>2026-</span>Teaching Associate, Columbia GSAPP</li></ul>
+<h2 class="label">elsewhere</h2><ul><li><span></span><a href="https://github.com/kelseydoubleu">github</a></li><li><span></span><a href="book/">pdf portfolio</a></li></ul></div></div></main>
+<footer><span>kelsey wang · new york</span><span><a href="https://github.com/kelseydoubleu">github</a> · <a href="book/">pdf portfolio</a></span></footer>
 <div class="lb" id="lb" hidden><img alt=""><button aria-label="Close">×</button></div>
-<script>
-const lb=document.getElementById('lb'),li=lb.querySelector('img');
-document.querySelectorAll('figure img').forEach(i=>i.addEventListener('click',()=>{li.src=i.src;lb.hidden=false;}));
-lb.addEventListener('click',()=>lb.hidden=true);
-addEventListener('keydown',e=>{if(e.key==='Escape')lb.hidden=true;});
-</script>
+<script src="fun.js"></script>
 </body>
 </html>
