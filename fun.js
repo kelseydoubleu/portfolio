@@ -110,7 +110,7 @@
   let pileStep = null, axonPar = null;
   if (W) {
     const views = { pile: $('#pile'), axon: $('#axon'), index: $('#index') };
-    const hints = { pile: coarse ? 'tap to open' : 'drag, throw, click to open, click the white to drop things', axon: 'hover a building, click to enter', index: 'all of it, in order' };
+    const hints = { pile: coarse ? 'tap to open' : 'drag, throw, click to open, click the white to drop things', axon: 'drag the blocks around, click to enter', index: 'all of it, in order' };
     let mode = 'pile';
     try { mode = sessionStorage.getItem('kw-mode') || (reduce ? 'index' : 'pile'); } catch (e) {}
     function setMode(m) {
@@ -208,47 +208,87 @@
       };
     }
 
-    /* ----- axon (2d affine isometric, no 3d transforms) ----- */
+    /* ----- axon: floating isometric blocks (2d affine faces, js-driven drift) ----- */
     let axonBuilt = false;
     function buildAxon() {
       if (axonBuilt) return; axonBuilt = true;
-      const iso = $('#iso');
+      const iso = $('#iso'), stage = views.axon;
       const C = Math.cos(Math.PI / 6), Sn = Math.sin(Math.PI / 6);
-      const S = 120, G = 60;
       const P = (x, y, z) => [(x - y) * C, (x + y) * Sn - z];
-      const cells = [[0, 0], [2, 0], [4, 0], [1, 1], [3, 1], [0, 2], [2, 2], [4, 2], [1, 3], [3, 3], [0, 4], [2, 4], [4, 4], [1, 0], [3, 0]];
-      const heights = [150, 70, 210, 40, 120, 90, 180, 60, 140, 30, 100, 160];
-      const cubes = W.map((it, i) => ({ it, cx: cells[i % cells.length][0], cy: cells[i % cells.length][1], h: heights[i % heights.length] }))
-        .sort((a, b) => (a.cx + a.cy) - (b.cx + b.cy) || a.cx - b.cx);
+      const toWorld = (sx, sy) => [(sx / C + sy / Sn) / 2, (sy / Sn - sx / C) / 2];
       const bg = n => n ? `url(img/${n}.jpg)` : 'none';
-      cubes.forEach(({ it, cx, cy, h }) => {
-        const x0 = cx * (S + G), y0 = cy * (S + G);
+      let SW = stage.clientWidth, SH = stage.clientHeight;
+      const k = Math.max(.55, Math.min(1, Math.sqrt(SW * SH / (1400 * 800))));
+      const rnd = (a, b) => a + Math.random() * (b - a);
+      const blocks = [];
+      W.forEach((it, i) => {
+        const S = Math.round(rnd(70, 150) * k), h = Math.round(rnd(.25, 1.5) * S);
         const c = document.createElement('a'); c.className = 'cube'; c.href = it.href; if (it.ext) { c.target = '_blank'; c.rel = 'noopener'; }
-        c.dataset.title = it.title.toLowerCase();
+        c.dataset.title = it.title.toLowerCase(); c.draggable = false;
         const imgs = it.imgs.length ? it.imgs : [null];
-        const top = P(x0, y0, h), south = P(x0, y0 + S, h), east = P(x0 + S, y0, h);
-        c.innerHTML =
+        const top = P(0, 0, h), south = P(0, S, h), east = P(S, 0, h);
+        c.innerHTML = `<div class="lift">` +
           `<div class="f s" style="width:${S}px;height:${h}px;transform:matrix(${C},${Sn},0,1,${south[0]},${south[1]});background-image:${bg(imgs[1 % imgs.length])}"></div>` +
           `<div class="f e" style="width:${S}px;height:${h}px;transform:matrix(${-C},${Sn},0,1,${east[0]},${east[1]})"><div style="position:absolute;inset:0;background-image:${bg(imgs[2 % imgs.length])};background-size:cover;background-position:center;transform:scaleX(-1)"></div></div>` +
-          `<div class="f top" style="width:${S}px;height:${S}px;transform:matrix(${C},${Sn},${-C},${Sn},${top[0]},${top[1]});background-image:${bg(imgs[0])}${it.cover ? '' : ';background-color:var(--o)'}"></div>`;
+          `<div class="f top" style="width:${S}px;height:${S}px;transform:matrix(${C},${Sn},${-C},${Sn},${top[0]},${top[1]});background-image:${bg(imgs[0])}${it.cover ? '' : ';background-color:var(--o)'}"></div></div>`;
         iso.appendChild(c);
+        blocks.push({ c, S, h, x: 0, y: 0, vx: 0, vy: 0, ph: Math.random() * 6.28, sp: rnd(.5, 1.1), amp: rnd(6, 18), drag: false });
       });
-      // bounds -> center
-      const xs = [], ys = [];
-      cubes.forEach(({ cx, cy, h }) => { const x0 = cx * (S + G), y0 = cy * (S + G); [[x0, y0, h], [x0 + S, y0, 0], [x0, y0 + S, 0], [x0 + S, y0 + S, 0]].forEach(q => { const p = P(...q); xs.push(p[0]); ys.push(p[1]); }); });
-      const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
-      iso.style.width = (maxX - minX) + 'px'; iso.style.height = (maxY - minY) + 'px';
-      $$('.cube', iso).forEach(c => c.style.left = (-minX) + 'px');
-      $$('.cube', iso).forEach(c => c.style.top = (-minY) + 'px');
-      const fit = () => { const k = Math.min(1, (views.axon.clientWidth - 40) / (maxX - minX), (views.axon.clientHeight - 100) / (maxY - minY)); iso.dataset.k = k; };
-      fit(); addEventListener('resize', fit);
-      let t0 = performance.now();
-      axonPar = () => {
-        if (!views.axon.classList.contains('on')) return;
-        const r = views.axon.getBoundingClientRect();
-        const mx = mouse.x > -999 ? (mouse.x - r.left) / r.width - .5 : 0, my = mouse.y > -999 ? (mouse.y - r.top) / r.height - .5 : 0;
-        const k = +iso.dataset.k || 1, t = (performance.now() - t0) / 1000;
-        iso.style.transform = `translate(${-mx * 30}px,${-my * 20 + Math.sin(t * .8) * 4}px) scale(${k})`;
+      // scatter in screen space with rejection sampling, then convert to world coords
+      const margin = 60 * k, topPad = 90;
+      blocks.forEach((b, i) => {
+        let best = null, bestD = -1;
+        for (let t = 0; t < 40; t++) {
+          const sx = rnd(margin + b.S * C, SW - margin - b.S * C), sy = rnd(topPad + b.h + b.S * .5, SH - margin - b.S * Sn);
+          let d = Infinity; blocks.slice(0, i).forEach(o => { const p = P(o.x + o.S / 2, o.y + o.S / 2, 0); d = Math.min(d, Math.hypot(p[0] - sx, p[1] - sy) - (o.S + b.S) * .6); });
+          if (d > bestD) { bestD = d; best = [sx, sy]; }
+        }
+        const w = toWorld(best[0], best[1]); b.x = w[0] - b.S / 2; b.y = w[1] - b.S / 2;
+        const ang = Math.random() * 6.28; b.vx = Math.cos(ang) * rnd(4, 10); b.vy = Math.sin(ang) * rnd(4, 10);
+      });
+      // drag in the ground plane; click without moving opens
+      let dragB = null, start = null;
+      blocks.forEach(b => {
+        b.c.addEventListener('pointerdown', e => { dragB = b; b.drag = true; start = { x: e.clientX, y: e.clientY, bx: b.x, by: b.y, moved: false }; b.c.setPointerCapture(e.pointerId); e.preventDefault(); });
+        b.c.addEventListener('pointermove', e => {
+          if (dragB !== b) return;
+          const dx = e.clientX - start.x, dy = e.clientY - start.y;
+          if (Math.hypot(dx, dy) > 5) start.moved = true;
+          const w = toWorld(dx, dy); b.x = start.bx + w[0]; b.y = start.by + w[1];
+        });
+        b.c.addEventListener('pointerup', () => { if (dragB === b) { b.drag = false; dragB = null; } });
+        b.c.addEventListener('click', e => { if (start && start.moved) e.preventDefault(); });
+      });
+      addEventListener('resize', () => { SW = stage.clientWidth; SH = stage.clientHeight; });
+      let last = performance.now();
+      axonPar = now => {
+        if (!stage.classList.contains('on')) { last = now; return; }
+        const dt = Math.min(.05, (now - last) / 1000); last = now; const t = now / 1000;
+        for (const b of blocks) {
+          if (!b.drag) {
+            // soft separation in screen space
+            for (const o of blocks) if (o !== b) {
+              const pb = P(b.x + b.S / 2, b.y + b.S / 2, 0), po = P(o.x + o.S / 2, o.y + o.S / 2, 0);
+              const dx = pb[0] - po[0], dy = (pb[1] - b.h / 2) - (po[1] - o.h / 2), d = Math.hypot(dx, dy), min = (b.S + o.S) * .62 + (b.h + o.h) * .15;
+              if (d < min && d > .1) { const w = toWorld(dx / d, dy / d); const f = (min - d) * .9; b.vx += w[0] * f * dt; b.vy += w[1] * f * dt; }
+            }
+            // keep on screen
+            const p = P(b.x + b.S / 2, b.y + b.S / 2, 0);
+            const L = margin + b.S * C, R = SW - margin - b.S * C, T = topPad + b.h + b.S * .5, B = SH - margin - b.S * Sn;
+            let fx = 0, fy = 0;
+            if (p[0] < L) fx = L - p[0]; if (p[0] > R) fx = R - p[0]; if (p[1] < T) fy = T - p[1]; if (p[1] > B) fy = B - p[1];
+            if (fx || fy) { const w = toWorld(fx, fy); b.vx += w[0] * 2 * dt; b.vy += w[1] * 2 * dt; }
+            // wander
+            b.vx += Math.sin(t * .3 + b.ph) * 2 * dt; b.vy += Math.cos(t * .27 + b.ph * 1.3) * 2 * dt;
+            const v = Math.hypot(b.vx, b.vy), vmax = 14; if (v > vmax) { b.vx *= vmax / v; b.vy *= vmax / v; }
+            b.vx *= .995; b.vy *= .995;
+            b.x += b.vx * dt; b.y += b.vy * dt;
+          }
+          const z = Math.sin(t * b.sp + b.ph) * b.amp + (b.drag ? 30 : 0);
+          const s = P(b.x, b.y, z);
+          b.c.style.transform = `translate(${s[0].toFixed(1)}px,${s[1].toFixed(1)}px)`;
+          b.c.style.zIndex = Math.round(b.x + b.y + b.S) + 2000;
+        }
       };
     }
 
@@ -274,7 +314,7 @@
   function frame(now) {
     if (!reduce) stepLetters();
     if (pileStep) pileStep(now);
-    if (axonPar) axonPar();
+    if (axonPar) axonPar(now);
     if (!coarse) stepBox();
     requestAnimationFrame(frame);
   }
